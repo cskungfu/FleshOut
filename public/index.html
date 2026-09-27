@@ -127,7 +127,6 @@
             </div>
             <progress id="readerProgressBar" max="100" value="0"></progress>
           </div>
-
         </div>
 
         <section id="readerSurface" class="reader-surface">
@@ -517,5 +516,72 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script src="/app.js" type="module"></script>
+
+    <!-- ============ 本地单人自动登录 ============ -->
+    <script>
+      (function () {
+        const USERNAME = 'local';
+        const PASSWORD = 'local';
+        const MAX_RETRIES = 20;
+        const RETRY_INTERVAL = 400;
+
+        let retries = 0;
+
+        function isLoggedIn() {
+          const appShell = document.getElementById('appShell');
+          return appShell && !appShell.hidden;
+        }
+
+        function tryLogin() {
+          if (isLoggedIn()) return;
+
+          const usernameInput = document.getElementById('authUsername');
+          const passwordInput = document.getElementById('authPassword');
+          const loginButton = document.getElementById('loginButton');
+          const authForm = document.getElementById('authForm');
+
+          if (!usernameInput || !passwordInput || !loginButton || !authForm) {
+            if (retries++ < MAX_RETRIES) setTimeout(tryLogin, RETRY_INTERVAL);
+            return;
+          }
+
+          usernameInput.value = USERNAME;
+          passwordInput.value = PASSWORD;
+
+          if (authForm.requestSubmit) {
+            authForm.requestSubmit(loginButton);
+          } else {
+            loginButton.click();
+          }
+
+          setTimeout(checkLoginResult, 1200);
+        }
+
+        function checkLoginResult() {
+          if (isLoggedIn()) return;
+
+          const authStatus = document.getElementById('authStatus');
+          const registerButton = document.getElementById('registerButton');
+
+          const statusText = authStatus ? authStatus.textContent || '' : '';
+          const needRegister =
+            statusText.includes('不存在') ||
+            statusText.includes('用户') ||
+            statusText.includes('注册');
+
+          if (needRegister && registerButton) {
+            registerButton.click();
+            setTimeout(checkLoginResult, 1200);
+            return;
+          }
+
+          if (retries++ < MAX_RETRIES) setTimeout(tryLogin, RETRY_INTERVAL);
+        }
+
+        window.addEventListener('load', () => {
+          setTimeout(tryLogin, 600);
+        });
+      })();
+    </script>
   </body>
 </html>
