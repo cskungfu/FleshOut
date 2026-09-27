@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build Windows 7z
 
 on:
   workflow_dispatch:
@@ -16,28 +16,26 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '24'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build Windows installers
+      - name: Build Windows 7z
         run: npx electron-builder --win --x64 --publish never
 
       - name: List build output
         run: dir dist
 
-      - name: Upload EXE artifacts
-        uses: actions/upload-artifact@v6
+      - name: Upload 7z artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: FleshOut-Windows
+          name: FleshOut-Windows-7z
           path: |
-            dist/*.exe
-            dist/*.blockmap
-            dist/latest.yml
+            dist/*.7z
           if-no-files-found: warn
