@@ -1502,3 +1502,9 @@ label {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* 本地单人使用：隐藏登录界面和账号栏 */
+.auth-view,
+.account-bar {
+  display: none !important;
+}
