@@ -1,7 +1,6 @@
 :root {
   color-scheme: light;
   --page: #f7f4ef;
-  --page-soft: #faf8f4;
   --panel: #ffffff;
   --panel-soft: #f5f1ea;
   --line: #ebe5db;
@@ -38,7 +37,7 @@
 
 body {
   margin: 0;
-  min-width: 960px;
+  min-width: 0; /* 原来是 960px，改为 0 解决窗口窄时内容被挡住 */
   min-height: 100vh;
   background: var(--page);
   color: var(--text);
@@ -161,34 +160,61 @@ textarea:focus {
   gap: 10px;
 }
 
-/* ---------- 应用外壳 ---------- */
+/* ---------- 应用外壳（左侧边栏布局） ---------- */
 
 .app-shell {
   display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
   grid-template-rows: auto auto minmax(0, 1fr);
   height: 100vh;
-  background: var(--page);
 }
 
+/* 左上角品牌区 */
 .app-topbar {
+  grid-column: 1;
+  grid-row: 1;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 20px;
   background: var(--panel);
-  border-bottom: 1px solid var(--line);
-  padding: 14px 24px;
+  border-right: 1px solid var(--line);
+  border-bottom: none;
+}
+
+/* 左侧导航区 */
+.workspace-tabs {
+  grid-column: 1;
+  grid-row: 2 / 4;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 20px 20px;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  border-bottom: none;
+  overflow-y: auto;
+}
+
+/* 右侧内容区 */
+.workspace-view {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  min-height: 0;
+  overflow: auto;
 }
 
 .brand-block {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
   min-width: 0;
 }
 
 .brand-block h1 {
   margin: 0;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -201,8 +227,10 @@ textarea:focus {
 
 .account-bar {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 .account-bar span {
@@ -211,34 +239,27 @@ textarea:focus {
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .account-bar button {
-  min-height: 30px;
+  min-height: 32px;
   padding: 0 12px;
   font-size: 13px;
 }
 
-/* ---------- 顶部标签栏（胶囊式） ---------- */
-
-.workspace-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  padding: 10px 20px;
-  border-bottom: 1px solid var(--line);
-  background: var(--panel);
-}
-
+/* 左侧标签按钮样式 */
 .tab-button {
-  min-height: 34px;
-  padding: 0 14px;
-  border-radius: 999px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--muted);
-  font-size: 13px;
+  color: var(--text-soft);
+  font-size: 14px;
   font-weight: 500;
+  text-align: left;
+  display: flex;
+  align-items: center;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
@@ -253,7 +274,7 @@ textarea:focus {
   font-weight: 600;
 }
 
-/* 兼容旧的网格布局类（如果 app.js 里有引用） */
+/* 兼容旧的网格布局类 */
 .tool-tabs {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -290,7 +311,8 @@ textarea:focus {
 .workspace-narrow {
   display: grid;
   gap: 16px;
-  width: min(920px, 100%);
+  width: 100%;
+  max-width: 920px;
   margin: 0 auto;
 }
 
@@ -1367,62 +1389,14 @@ label {
 
 /* ---------- 响应式 ---------- */
 
-@media (max-width: 1180px) {
-  body {
-    min-width: 0;
-  }
-}
-
 @media (max-width: 980px) {
   .app-shell {
-    height: auto;
-    min-height: 100vh;
-  }
-
-  .reader-control-stack {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    box-shadow: 0 8px 20px rgba(45, 42, 38, 0.06);
+    grid-template-columns: 180px minmax(0, 1fr);
   }
 
   .app-topbar,
-  .reader-toolbar,
-  .reader-settings {
-    justify-content: flex-start;
-  }
-
-  .app-topbar {
-    flex-wrap: wrap;
-  }
-
-  .reader-quick-actions {
-    margin-left: auto;
-    justify-content: flex-end;
-  }
-
-  .reader-toolbar-toggle {
-    margin-left: 0;
-  }
-
-  .reader-control-stack.collapsed .current-book small {
-    display: none;
-  }
-
-  .reader-control-stack.collapsed .current-book span {
-    font-size: 14px;
-  }
-
-  .reader-control-stack.collapsed .reader-toolbar {
-    flex-wrap: wrap;
-  }
-
-  .reader-control-stack.collapsed + .reader-surface .reader-text {
-    padding-top: 18px;
-  }
-
   .workspace-tabs {
-    flex-wrap: wrap;
+    padding: 15px;
   }
 
   .workspace-grid {
@@ -1446,6 +1420,37 @@ label {
 }
 
 @media (max-width: 560px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .app-topbar {
+    grid-column: 1;
+    grid-row: 1;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .workspace-tabs {
+    grid-column: 1;
+    grid-row: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 10px;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .workspace-view {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
   .upload-row,
   .settings-grid,
   .range-actions,
