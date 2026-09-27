@@ -20,6 +20,7 @@
   "build": {
     "appId": "com.fleshout.app",
     "productName": "FleshOut",
+    "asar": false,
     "directories": {
       "output": "dist"
     },
